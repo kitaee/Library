@@ -7,13 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Board {
+public class PostReport {
     private final Connection conn = DBConnection.conn;
 
-    public void create(String name) {
+    public void create(Long postId, Long userId) {
         PreparedStatement ps = null;
         try {
-            String sql = String.format("INSERT INTO board (name) VALUES ('%s')", name);
+            String sql = String.format("INSERT INTO post_report (post_id, user_id) " +
+                    "VALUES (%d, %d)", postId, userId);
 
             ps = conn.prepareStatement(sql);
             ps.execute();
@@ -30,11 +31,11 @@ public class Board {
         }
     }
 
-    public void readByName(String name) {
+    public void readByPostId(Long postId) {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String sql = String.format("SELECT * FROM board WHERE name = '%s'", name);
+            String sql = String.format("SELECT * FROM post_report WHERE post_id = %d", postId);
 
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
@@ -67,10 +68,10 @@ public class Board {
         }
     }
 
-    public void updateById(Long boardId, String newName) {
+    public void delete(Long postReportId) {
         PreparedStatement ps = null;
         try {
-            String sql = String.format("UPDATE board SET name = '%s' WHERE board_id = '%d'", newName, boardId);
+            String sql = String.format("DELETE FROM post_report WHERE post_report_id = %d", postReportId);
 
             ps = conn.prepareStatement(sql);
             ps.execute();
@@ -86,25 +87,4 @@ public class Board {
             }
         }
     }
-
-    public void deleteById(Long boardId) {
-        PreparedStatement ps = null;
-        try {
-            String sql = String.format("DELETE FROM board WHERE board_id = %d", boardId);
-
-            ps = conn.prepareStatement(sql);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
 }
