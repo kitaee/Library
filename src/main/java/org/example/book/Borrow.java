@@ -47,14 +47,16 @@ public class Borrow {
         }
     }
 
-    public void create(String status, Long user_id, String book_id) {
+    public void create(String status, String borrowDate, String returnDate, Long user_id, String book_id) {
         PreparedStatement ps = null;
         try {
-            String sql = "INSERT INTO borrow (status,user_id, book_id) VALUES (?,?,?)";
+            String sql = "INSERT INTO borrow (status, borrow_date, return_date, user_id, book_id) VALUES (?,?,?,?,?)";
             ps = conn.prepareStatement(sql);
             ps.setString(1,status);
-            ps.setLong(2,user_id);
-            ps.setString(3,book_id);
+            ps.setString(2, borrowDate);
+            ps.setString(3, returnDate);
+            ps.setLong(4,user_id);
+            ps.setString(5,book_id);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,7 +97,44 @@ public class Borrow {
         }
     }
 
-    public Date getReturnDateById(Long name) {
+    public void selectAllExtendList(){
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT * FROM extend_return_date";
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
+            System.out.printf("%-20s %-20s", "BORROW ID", "EXTENDED DATE");
+            System.out.println();
+            while (rs.next()){
+                System.out.format("%-20s %-20s",
+                        rs.getString("borrow_id"), rs.getString("extended_date"));
+                System.out.println();
+            }
+            System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null){
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public Date getReturnDateById(Long id) {
         ResultSet rs = null;
         PreparedStatement ps = null;
         Date ret = null;
@@ -103,8 +142,10 @@ public class Borrow {
         try {
             String sql = "SELECT * FROM borrow WHERE borrow_id = ?";
             ps = conn.prepareStatement(sql);
+            ps.setLong(1, id);
             rs = ps.executeQuery();
             try {
+                rs.next();
                 ret = rs.getDate("return_date");
             } catch (SQLException e) {
                 e.printStackTrace();
