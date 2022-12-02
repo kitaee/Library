@@ -73,7 +73,7 @@ public class Main {
                     choice.nextLine();
                     System.out.print("book id : ");
                     String bookID = choice.nextLine();
-                    borrow.create("BORROWING", dateFormat.format(borrowDay), dateFormat.format(returnDay), userID, bookID);
+                    borrow.create("BORROW", userID, bookID);
                     break;
                 //책 대여 기록 출력
                 case 7:
