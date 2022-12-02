@@ -1,13 +1,12 @@
-package org.example.user;
+package org.example.book;
 
 import org.example.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Calendar;
 
-public class User {
+public class Borrow {
+
     private final Connection conn = DBConnection.conn;
 
     public void selectAll(){
@@ -15,16 +14,16 @@ public class User {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM user";
+            String sql = "SELECT * FROM borrow";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s", "USER ID", "NAME", "EMAIL", "PASSWORD", "TYPE", "STATUS");
+            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s", "BORROW ID", "BORROW DATE", "RETURN DATE", "STATUS}", "USERID", "BOOK ID");
             System.out.println();
             while (rs.next()){
                 System.out.format("%-20s %-20s %-20s %-20s %-20s %-20s",
-                        rs.getString("user_id"), rs.getString("name"), rs.getString("email")
-                        ,rs.getString("password"), rs.getString("type"), rs.getString("status"));
+                        rs.getString("borrow_id"), rs.getString("borrow_date"), rs.getString("return_date")
+                        ,rs.getString("status"), rs.getString("user_id"), rs.getString("book_id"));
                 System.out.println();
             }
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
@@ -48,13 +47,14 @@ public class User {
         }
     }
 
-    public void create(String name, String email, String password, String type, String status) {
+    public void create(String status, Long user_id, String book_id) {
         PreparedStatement ps = null;
         try {
-            String sql = String.format("INSERT INTO user (name, email, password, type, status) " +
-                    "VALUES ('%s', %s, %s, %s, %s)", name, email, password, type, status);
-
+            String sql = "INSERT INTO borrow (status,user_id, book_id) VALUES (?,?,?)";
             ps = conn.prepareStatement(sql);
+            ps.setString(1,status);
+            ps.setLong(2,user_id);
+            ps.setString(3,book_id);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,22 +69,43 @@ public class User {
         }
     }
 
+    public void extendReturnDate(Long id){
+        PreparedStatement ps = null;
+        Calendar cal = Calendar.getInstance();
+        Date ReturnDate = getReturnDateById(id);
+        cal.setTime(ReturnDate);
+        cal.add(Calendar.DATE,7);
+        try {
+            String sql = "INSERT INTO extend_return_date VALUES (?,?)";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,id);
+            ps.setDate(2,new java.sql.Date(cal.getTime().getTime()));
 
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
-    public void readByName(Long name) {
+    public Date getReturnDateById(Long name) {
         ResultSet rs = null;
         PreparedStatement ps = null;
-        try {
-            String sql = String.format("SELECT * FROM user WHERE name = %s", name);
+        Date ret = null;
 
+        try {
+            String sql = "SELECT * FROM borrow WHERE borrow_id = ?";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             try {
-                while (rs.next()) {
-                    // rs.getString(x) 일 경우 x번째 column에 있는 값을 String으로 가져온다는 의미
-                    // rs.getInt(x)는 x번째 column의 값을 int로 가져옴
-                    System.out.println(rs.getString(2));
-                }
+                ret = rs.getDate("return_date");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -106,8 +127,10 @@ public class User {
                 }
             }
         }
+        return ret;
     }
 
+    /*
     public void update(Long userId, String name, String email, String password, String type, String status) {
         PreparedStatement ps = null;
         try {
@@ -128,7 +151,8 @@ public class User {
             }
         }
     }
-
+*/
+/*
     public void delete(Long userId) {
         PreparedStatement ps = null;
         try {
@@ -148,4 +172,6 @@ public class User {
             }
         }
     }
+
+ */
 }
