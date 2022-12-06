@@ -7,19 +7,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Book {
+public class Overdue {
     private final Connection conn = DBConnection.conn;
 
-    public void create(String name,String location,String isbn, String classification_code,Long publisher_id) {
+    public void create(Long borrow_id, int overdue_day, int overdue_fee) {
         PreparedStatement ps = null;
         try {
-            String sql = "INSERT INTO book (name,location,isbn,classification_code,publisher_id) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO overdue (borrow_id, overdue_day, overdue_fee) VALUES (?,?,?)";
             ps = conn.prepareStatement(sql);
-            ps.setString(1,name);
-            ps.setString(2,location);
-            ps.setString(3,isbn);
-            ps.setString(4,classification_code);
-            ps.setLong(5,publisher_id);
+            ps.setLong(1,borrow_id);
+            ps.setInt(2,overdue_day);
+            ps.setInt(3,overdue_fee);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,20 +32,20 @@ public class Book {
         }
     }
 
-    public void readById(String id) {
+    public void readById(Long borrow_id) {
         ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String sql = "SELECT * FROM book WHERE book_id = ?";
+            String sql = "SELECT * FROM overdue WHERE borrow_id = ?";
 
             ps = conn.prepareStatement(sql);
-            ps.setString(1,id);
+            ps.setLong(1,borrow_id);
             rs = ps.executeQuery();
             try {
                 while (rs.next()) {
                     // rs.getString(x) 일 경우 x번째 column에 있는 값을 String으로 가져온다는 의미
                     // rs.getInt(x)는 x번째 column의 값을 int로 가져옴
-                    System.out.println("result : " + rs.getString("book_id") + " "+ rs.getString("name") + " "+ rs.getString("location") + " "+ rs.getString("isbn") + " " + rs.getString("classification_code") + " " + rs.getString("publisher_id"));
+                    System.out.println("result : " + rs.getLong("borrow_id") + " "+ rs.getString("overdue_day") + " "+ rs.getString("overdue_fee") );
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -72,16 +70,52 @@ public class Book {
         }
     }
 
-    public void updateById(String book_id, String name,String location,String isbn, String classification_code,Long publisher_id) {
+    public void readByUserId(Long user_id) {
+        ResultSet rs = null;
         PreparedStatement ps = null;
         try {
-            String sql = "UPDATE book SET name = ?,location = ?,isbn = ?,classification_code = ?,publisher_id = ?  WHERE book_id = ?";
+            String sql = "SELECT * FROM overdue JOIN borrow ON overdue.borrow_id = borrow.borrow_id WHERE borrow.user_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setString(1,location);
-            ps.setString(2, isbn);
-            ps.setString(3, classification_code);
-            ps.setLong(4, publisher_id);
-            ps.setString(5,book_id);
+            ps.setLong(1,user_id);
+            rs = ps.executeQuery();
+            try {
+                while (rs.next()) {
+                    // rs.getString(x) 일 경우 x번째 column에 있는 값을 String으로 가져온다는 의미
+                    // rs.getInt(x)는 x번째 column의 값을 int로 가져옴
+                    System.out.println("result : " + rs.getLong("borrow_id") + " "+ rs.getString("overdue_day") + " "+ rs.getString("overdue_fee") );
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+
+    public void updateById(Long borrow_id, String overdue_day, String overdue_fee) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "UPDATE overdue SET overdue_day=?,overdue_fee=? WHERE borrow_id = ?";
+            ps = conn.prepareStatement(sql);
+            ps.setString(1,overdue_day);
+            ps.setString(2, overdue_fee);
+            ps.setLong(3, borrow_id);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -96,12 +130,12 @@ public class Book {
         }
     }
 
-    public void deleteById(String book_id) {
+    public void deleteById(Long borrow_id) {
         PreparedStatement ps = null;
         try {
-            String sql = "DELETE FROM book WHERE book_id = ?";
+            String sql = "DELETE FROM overdue WHERE borrow_id = ?";
             ps = conn.prepareStatement(sql);
-            ps.setString(1,book_id);
+            ps.setLong(1,borrow_id);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,16 +156,15 @@ public class Book {
         ResultSet rs = null;
 
         try {
-            String sql = "SELECT * FROM book";
+            String sql = "SELECT * FROM overdue";
             ps = conn.prepareStatement(sql);
             rs = ps.executeQuery();
             System.out.println("------------------------------------------------------------------------------------------------------------------------------------------");
-            System.out.printf("%-20s %-20s %-20s %-20s %-20s %-20s", "BOOK ID", "NAME", "LOCATION", "ISBN", "CLASSIFICATION CODE", "PUBLISHER_ID");
+            System.out.printf("%-20s %-20s %-20s", "BORROW_ID", "OVERDUE_DAY", "OVERDUE_FEE");
             System.out.println();
             while (rs.next()){
-                System.out.format("%-20s %-20s %-20s %-20s %-20s %-20s",
-                       rs.getString("book_id"), rs.getString("name"), rs.getString("loaction")
-                ,rs.getString("isbn"), rs.getString("classification_code"), rs.getLong("publisher_id"));
+                System.out.format("%-20s %-20s %-20s",
+                        rs.getString("borrow_id"), rs.getString("overdue_day"), rs.getString("overdue_fee"));
                 System.out.println();
             }
             System.out.println("--------------------------------------------------------------------------------------------------------------------------------");
@@ -152,25 +185,6 @@ public class Book {
                     e.printStackTrace();
                 }
             }
-        }
-    }
-
-    public void monthlyBest(int month){
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        try{
-            String sql = "SELECT monthlyBest(?) as monthlyBest";
-            ps = conn.prepareStatement(sql);
-            ps.setLong(1, month);
-            rs = ps.executeQuery();
-            rs.next();
-            System.out.println(month+"'s Monthly book is "+rs.getString("monthlyBest")+"\n");
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
-        finally{
-
         }
     }
 
