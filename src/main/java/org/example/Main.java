@@ -104,6 +104,17 @@ public class Main {
                     dummy.createBookRelatedDummy(num2);
                     System.out.println();
                     break;
+                //요금 확인 데이터
+                case 12:
+                    System.out.print("borrow id : ");
+                    Long borrowId= choice.nextLong();
+                    borrow.checkFee(borrowId);
+                //Monthly Best
+                case 13:
+                    System.out.print("When month : ");
+                    int month = choice.nextInt();
+                    book.monthlyBest(month);
+
             }
             printMenu();
         }
@@ -122,6 +133,8 @@ public class Main {
         System.out.println("9.extend list");
         System.out.println("10.add dummy users");
         System.out.println("11.add dummy books");
+        System.out.println("12.answer extend return fee");
+        System.out.println("13. This month best seller");
         System.out.print("choice : ");
     }
     public static String getToday()

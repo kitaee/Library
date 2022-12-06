@@ -2,10 +2,9 @@ package org.example.user;
 
 import org.example.DBConnection;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.Date;
 
 public class VisitRecord {
     private static final int ENTER = 0;
@@ -20,6 +19,16 @@ public class VisitRecord {
 
             ps = conn.prepareStatement(sql);
             ps.execute();
+
+            String sql1 = "SELECT checkEnterOverSit(?, ?) as r";
+            ps = conn.prepareStatement(sql1);
+            ps.setString(1, time);
+            ps.setLong(2,userId);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            if (rs.getInt(1)==0) {
+                System.out.println("You exit library during more than 2 hour");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

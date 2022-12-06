@@ -3,6 +3,7 @@ package org.example.book;
 import org.example.DBConnection;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.Calendar;
 
 public class Borrow {
@@ -84,6 +85,30 @@ public class Borrow {
             ps.setDate(2,new java.sql.Date(cal.getTime().getTime()));
 
             ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void checkFee(Long id){
+        PreparedStatement ps = null;
+        try {
+            String fee = "SELECT getLateFee(borrow_date, ?) as fee from" +
+                    "(SELECT borrow_date FROM borrow where borrow_id=?) as s";
+            ps = conn.prepareStatement(fee);
+            ps.setString(1, LocalDate.now().toString());
+            ps.setLong(2,id);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            System.out.println("Your fee is : "+rs.getString("fee")+" won\n");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
