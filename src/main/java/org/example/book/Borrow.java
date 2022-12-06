@@ -168,49 +168,4 @@ public class Borrow {
         }
         return ret;
     }
-
-    /*
-    public void update(Long userId, String name, String email, String password, String type, String status) {
-        PreparedStatement ps = null;
-        try {
-            String sql = String.format("UPDATE user SET name = '%s', email = '%s', password = '%s', type = '%s', status = '%s'" +
-                    " WHERE user_id = %d" , name, email, password, type, status, userId);
-
-            ps = conn.prepareStatement(sql);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-*/
-/*
-    public void delete(Long userId) {
-        PreparedStatement ps = null;
-        try {
-            String sql = String.format("DELETE FROM user WHERE user_id = %d", userId);
-
-            ps = conn.prepareStatement(sql);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
- */
 }
