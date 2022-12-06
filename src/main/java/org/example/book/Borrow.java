@@ -47,16 +47,14 @@ public class Borrow {
         }
     }
 
-    public void create(String status, String borrowDate, String returnDate, Long user_id, String book_id) {
+    public void create(String status, Long user_id, String book_id) {
         PreparedStatement ps = null;
         try {
-            String sql = "INSERT INTO borrow (status, borrow_date, return_date, user_id, book_id) VALUES (?,?,?,?,?)";
+            String sql = "INSERT INTO borrow (status, user_id, book_id) VALUES (?,?,?)";
             ps = conn.prepareStatement(sql);
             ps.setString(1,status);
-            ps.setString(2, borrowDate);
-            ps.setString(3, returnDate);
-            ps.setLong(4,user_id);
-            ps.setString(5,book_id);
+            ps.setLong(2,user_id);
+            ps.setString(3,book_id);
             ps.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -170,49 +168,4 @@ public class Borrow {
         }
         return ret;
     }
-
-    /*
-    public void update(Long userId, String name, String email, String password, String type, String status) {
-        PreparedStatement ps = null;
-        try {
-            String sql = String.format("UPDATE user SET name = '%s', email = '%s', password = '%s', type = '%s', status = '%s'" +
-                    " WHERE user_id = %d" , name, email, password, type, status, userId);
-
-            ps = conn.prepareStatement(sql);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-*/
-/*
-    public void delete(Long userId) {
-        PreparedStatement ps = null;
-        try {
-            String sql = String.format("DELETE FROM user WHERE user_id = %d", userId);
-
-            ps = conn.prepareStatement(sql);
-            ps.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
- */
 }

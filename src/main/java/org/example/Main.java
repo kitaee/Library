@@ -4,6 +4,7 @@ package org.example;
 import org.example.book.Book;
 import org.example.book.Borrow;
 import org.example.post.Board;
+import org.example.teamRoom.TeamRoomReservation;
 import org.example.user.User;
 import org.example.user.VisitRecord;
 
@@ -18,7 +19,7 @@ public class Main {
     static Book book = new Book();
     static Borrow borrow = new Borrow();
     static VisitRecord visitRecord = new VisitRecord();
-
+    static TeamRoomReservation teamRoomReservation = new TeamRoomReservation();
     public static void main(String[] args) {
         System.out.println("\n" +
                 " _      _____ ______ ______   ___  ______ __   __\n" +
@@ -73,7 +74,7 @@ public class Main {
                     choice.nextLine();
                     System.out.print("book id : ");
                     String bookID = choice.nextLine();
-                    borrow.create("BORROWING", dateFormat.format(borrowDay), dateFormat.format(returnDay), userID, bookID);
+                    borrow.create("BORROW", userID, bookID);
                     break;
                 //책 대여 기록 출력
                 case 7:
@@ -90,19 +91,43 @@ public class Main {
                 case 9:
                     borrow.selectAllExtendList();
                     break;
-                //유저 더미 데이터
+                //팀플실 예약
                 case 10:
+                    System.out.print("team room id : ");
+                    Long teamRoomId = choice.nextLong();
+                    choice.nextLine();
+                    System.out.println("start time : ");
+                    String startTime = choice.nextLine();
+                    System.out.println("end time : ");
+                    String endTime = choice.nextLine();
+                    System.out.println("people number : ");
+                    int peopleNum = choice.nextInt();
+                    choice.nextLine();
+                    System.out.println("user id : ");
+                    Long userId = choice.nextLong();
+                    choice.nextLine();
+                    teamRoomReservation.create(startTime,endTime,peopleNum,teamRoomId,userId);
+                    break;
+                //팀플실 리스트
+                case 11:
+                    teamRoomReservation.selectAll();
+                    break;
+                //유저 더미 데이터
+                case 20:
                     System.out.print("num : ");
                     int num1 = choice.nextInt();
                     dummy.createUserDummy(num1);
                     System.out.println();
                     break;
                 //책 관련 더미 데이터
-                case 11:
+                case 21:
                     System.out.print("num : ");
                     int num2 = choice.nextInt();
                     dummy.createBookRelatedDummy(num2);
                     System.out.println();
+                    break;
+                case 100:
+                    dummy.truncateAllTable();
                     break;
             }
             printMenu();
@@ -120,8 +145,9 @@ public class Main {
         System.out.println("7.borrow list");
         System.out.println("8.extend return date");
         System.out.println("9.extend list");
-        System.out.println("10.add dummy users");
-        System.out.println("11.add dummy books");
+        System.out.println("10. team room reservation");
+        System.out.println("20.add dummy users");
+        System.out.println("21.add dummy books");
         System.out.print("choice : ");
     }
     public static String getToday()
