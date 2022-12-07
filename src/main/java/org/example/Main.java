@@ -155,16 +155,10 @@ public class Main {
         System.out.println("7.borrow list");
         System.out.println("8.extend return date");
         System.out.println("9.extend list");
-<<<<<<< HEAD
-        System.out.println("10.add dummy users");
-        System.out.println("11.add dummy books");
-        System.out.println("12.answer extend return fee");
-        System.out.println("13. This month best seller");
-=======
+
         System.out.println("10. team room reservation");
         System.out.println("20.add dummy users");
         System.out.println("21.add dummy books");
->>>>>>> 0bbdfa966c28b0dcd573f2f529a9a1fa1b5949e8
         System.out.print("choice : ");
     }
     public static String getToday()
