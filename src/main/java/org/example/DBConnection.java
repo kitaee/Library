@@ -9,6 +9,7 @@ public class DBConnection {
     public static String dbUser = "root";
     public static String dbpasswd = "asdas!asd";
 
+
     public static Connection conn;
 
     static {

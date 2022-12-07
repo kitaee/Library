@@ -155,4 +155,23 @@ public class Book {
         }
     }
 
+    public void monthlyBest(int month){
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        try{
+            String sql = "SELECT monthlyBest(?) as monthlyBest";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1, month);
+            rs = ps.executeQuery();
+            rs.next();
+            System.out.println(month+"'s Monthly book is "+rs.getString("monthlyBest")+"\n");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+        finally{
+
+        }
+    }
+
 }
