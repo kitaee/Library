@@ -64,7 +64,7 @@ public class Main {
                     user.selectAll();
                     break;
                 //책 빌리기
-                //빌리는중 BORROWING, 반납 RETURNED
+                //빌리는중 BORROW, 반납 RETURN
                 case 6:
                     Date borrowDay = new Date();
                     Date returnDay = addDays(borrowDay, 7);
@@ -76,23 +76,32 @@ public class Main {
                     String bookID = choice.nextLine();
                     borrow.create("BORROW", userID, bookID);
                     break;
-                //책 대여 기록 출력
+                    //책 반납
                 case 7:
+                    System.out.print("user id : ");
+                    Long user_id = choice.nextLong();
+                    choice.nextLine();
+                    System.out.print("book id : ");
+                    String book_id = choice.nextLine();
+                    borrow.returnBook(book_id,user_id);
+                    break;
+                //책 대여 기록 출력
+                case 8:
                     borrow.selectAll();
                     break;
                 //대여 연장
-                case 8:
+                case 9:
                     System.out.print("borrow id : ");
                     borrowID = choice.nextLong();
                     choice.nextLine();
                     borrow.extendReturnDate(borrowID);
                     break;
                 //대여 연장 기록
-                case 9:
+                case 10:
                     borrow.selectAllExtendList();
                     break;
                 //팀플실 예약
-                case 10:
+                case 11:
                     System.out.print("team room id : ");
                     Long teamRoomId = choice.nextLong();
                     choice.nextLine();
@@ -109,7 +118,7 @@ public class Main {
                     teamRoomReservation.create(startTime,endTime,peopleNum,teamRoomId,userId);
                     break;
                 //팀플실 리스트
-                case 11:
+                case 12:
                     teamRoomReservation.selectAll();
                     break;
                 //유저 더미 데이터
@@ -152,11 +161,13 @@ public class Main {
         System.out.println("4.book list");
         System.out.println("5.user list");
         System.out.println("6.borrow books");
-        System.out.println("7.borrow list");
-        System.out.println("8.extend return date");
-        System.out.println("9.extend list");
-
-        System.out.println("10. team room reservation");
+        System.out.println("7.return books");
+        System.out.println("8.borrow list");
+        System.out.println("9.extend return date");
+        System.out.println("10.extend list");
+        System.out.println("11. team room reservation");
+        System.out.println("12.answer extend return fee");
+        System.out.println("13. This month best seller");
         System.out.println("20.add dummy users");
         System.out.println("21.add dummy books");
         System.out.print("choice : ");
