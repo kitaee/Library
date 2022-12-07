@@ -168,4 +168,25 @@ public class Borrow {
         }
         return ret;
     }
+
+    public void returnBook(String book_id, Long user_id) {
+        PreparedStatement ps = null;
+        try {
+            String sql = "UPDATE borrow SET status = 'RETURN' WHERE user_id = ? AND book_id = ? AND status = 'BORROW'";
+            ps = conn.prepareStatement(sql);
+            ps.setLong(1,user_id);
+            ps.setString(2,book_id);
+            ps.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 }
